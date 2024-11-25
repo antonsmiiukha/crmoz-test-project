@@ -1,8 +1,8 @@
 import {IRequest, IResponse} from '../api.type.ts';
 
 export interface IGeo {
-  lat: number;
-  lng: number;
+  lat: string;
+  lng: string;
 }
 
 export interface IAddress {

@@ -13,8 +13,8 @@ export const MapComponent: React.FC<MapComponentProps> = ({geo}) => {
 
   const region = useMemo(() => {
     return {
-      latitude: geo.lat,
-      longitude: geo.lng,
+      latitude: parseFloat(geo.lat),
+      longitude: parseFloat(geo.lng),
       latitudeDelta: 30,
       longitudeDelta: 30,
     };
