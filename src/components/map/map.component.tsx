@@ -1,33 +1,30 @@
-import React, {useMemo} from 'react';
-import {IGeo} from '../../api/user/user.type.ts';
+import React, {memo, MutableRefObject} from 'react';
 import {View} from 'react-native';
-import MapView, {Marker} from 'react-native-maps';
+import MapView, {AnimatedRegion, Marker} from 'react-native-maps';
 import {useTailWind} from '../../hook/tailwind.hook.ts';
+import {LatLng, Region} from 'react-native-maps/lib/sharedTypes';
 
 interface MapComponentProps {
-  geo: IGeo;
+  markerCoordinate: AnimatedRegion | undefined;
+  mapRef: MutableRefObject<MapView | null> | undefined;
+  initialRegion: Region;
 }
 
-export const MapComponent: React.FC<MapComponentProps> = ({geo}) => {
+export const MapComponent: React.FC<MapComponentProps> = ({
+  markerCoordinate,
+  mapRef,
+  initialRegion,
+}) => {
   const {tw} = useTailWind();
-
-  const region = useMemo(() => {
-    return {
-      latitude: parseFloat(geo.lat),
-      longitude: parseFloat(geo.lng),
-      latitudeDelta: 30,
-      longitudeDelta: 30,
-    };
-  }, [geo]);
 
   return (
     <View style={tw`w-full h-100`}>
-      <MapView region={region} style={tw`h-full w-full`}>
-        <Marker
-          style={tw`w-full h-full`}
-          coordinate={{latitude: region.latitude, longitude: region.longitude}}
-        />
+      <MapView ref={mapRef} initialRegion={initialRegion} style={tw`flex-1`}>
+        {/* According to the documentation, it should support this type */}
+        <Marker.Animated coordinate={markerCoordinate as unknown as LatLng} />
       </MapView>
     </View>
   );
 };
+
+export const MapComponentMemoized = memo(MapComponent, () => true);

@@ -1,16 +1,33 @@
-import React from 'react';
+import React, {MutableRefObject} from 'react';
 import {IUser} from '../../api/user/user.type.ts';
 import {ScrollView, View} from 'react-native';
 import {ScreenComponent} from '../screen/screen.component.tsx';
 import {useTailWind} from '../../hook/tailwind.hook.ts';
 import {TextComponent} from '../text/text.component.tsx';
-import {MapTabsComponent} from '../map-tabs/map-tabs.component.tsx';
+import {MapComponentMemoized} from '../map/map.component.tsx';
+import {SwitchComponent} from '../switch/switch.component.tsx';
+import MapView, {AnimatedRegion} from 'react-native-maps';
+import {Region} from 'react-native-maps';
+import {EMapMarkerVariant} from '../../screen/user/user.type.ts';
+import {IItems, ISwitchComponentCallback} from '../switch/switch.type.ts';
 
 interface UserComponentProps {
   user: IUser;
+  addressVariants: IItems<EMapMarkerVariant>;
+  onChangeAddressVariant: ISwitchComponentCallback<EMapMarkerVariant>;
+  markerCoordinate: AnimatedRegion | undefined;
+  mapRef: MutableRefObject<MapView | null> | undefined;
+  initialRegion: Region;
 }
 
-export const UserComponent: React.FC<UserComponentProps> = ({user}) => {
+export const UserComponent: React.FC<UserComponentProps> = ({
+  user,
+  addressVariants,
+  onChangeAddressVariant,
+  markerCoordinate,
+  mapRef,
+  initialRegion,
+}) => {
   const {tw} = useTailWind();
 
   return (
@@ -45,7 +62,15 @@ export const UserComponent: React.FC<UserComponentProps> = ({user}) => {
               </View>
             </View>
           </View>
-          <MapTabsComponent address={user.address} />
+          <SwitchComponent<EMapMarkerVariant>
+            items={addressVariants}
+            onChange={onChangeAddressVariant}
+          />
+          <MapComponentMemoized
+            mapRef={mapRef}
+            markerCoordinate={markerCoordinate}
+            initialRegion={initialRegion}
+          />
         </View>
       </ScrollView>
     </ScreenComponent>

@@ -6,6 +6,7 @@ export const twConfig: TwConfig = {
       base: {
         1: '#111',
         2: '#eee',
+        3: '#999',
       },
     },
   },

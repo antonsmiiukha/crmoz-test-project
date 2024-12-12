@@ -3,13 +3,15 @@ import {IAddress, IGeo} from '../api/user/user.type.ts';
 import {useEffect, useState} from 'react';
 import {GEOCODER_API_KEY} from '../config/google.ts';
 
-Geocoder.init(GEOCODER_API_KEY);
+Geocoder.init(GEOCODER_API_KEY, {language: 'en'});
 
 export const useGeoByAddress = (address: IAddress | undefined) => {
-  const [geo, setGeo] = useState<IGeo | null | undefined>(undefined);
+  const [geo, setGeo] = useState<IGeo | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (address !== undefined) {
+      setLoading(true);
       Geocoder.from(
         `${address.city} ${address.suite} ${address.street} ${address.zipcode}`,
       )
@@ -18,9 +20,12 @@ export const useGeoByAddress = (address: IAddress | undefined) => {
         })
         .catch(() => {
           setGeo(null);
+        })
+        .finally(() => {
+          setLoading(false);
         });
     }
   }, [address]);
 
-  return {geoByAddress: geo};
+  return {geo, loading};
 };
